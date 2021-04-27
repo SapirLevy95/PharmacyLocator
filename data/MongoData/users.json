@@ -1,0 +1,5 @@
+[
+    {"name" : "Moshe" , "email" : "mosh92@gmail.com", "pharmacy_id" : "268157255" , "password" : "sadasd"},
+    {"name" : "Sapir" , "email" : "sapir.lev1515@gmail.com", "pharmacy_id" : null , "password" : "afsf"},
+    {"name" : "a" , "email" : "a", "pharmacy_id" : null , "password" : "a"}
+]
