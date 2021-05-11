@@ -9,35 +9,12 @@ initializePharmecies()
 printAllUsers()
 
 export default function App() {
-  const [user, setUser] = useState(null);
+  let [user, setUser] = useState(null);
+  user = { userName: 'Moshe', password: "123", locationId: 5000 }
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
       {user ? <MainScreen user={user} /> : <Welcome setUser={setUser} />}
     </div>
   );
 }
 
-
-
-// function Clicker(props) {
-//   const onClick = () => {
-//     setNumber(number + 1)
-//     console.log('clicked')
-//     console.log(number)
-//   }
-
-//   return (<button className="btn btn-primary btn-block" onClick={onClick}>{props.number} </button>)
-// }
-
-// export default function App(props) {
-//   const [number, setNumber] = useState(0);
-
-//   console.log('render')
-
-//   return (
-//     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-//       <h1>number is {number}</h1>
-//       <Clicker number={number} setNumber={setNumber} />
-//     </div>
-//   )
-// }

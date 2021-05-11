@@ -28,7 +28,6 @@ export function printAllUsers() {
     })
   }
   setTimeout(temp, 500)
-
 }
 
 export async function isUsernameExists(userName) {
@@ -75,4 +74,12 @@ export async function enterAllPharmacies() {
     };
     await pharmacies_db.put(pharmecyFromDict)
   })
+}
+
+export function getLocation(locationId) {
+  return {
+    'id': locationId,
+    'count': 5,
+    'name': 'Yigal Alon'
+  }
 }

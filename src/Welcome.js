@@ -4,8 +4,8 @@ import { logIn, signUp, printAllUsers, user_db, isUsernameExists } from './UserM
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 export default function Welcome(props) {
-  const [userName, setUserName] = useState('');
-  const [password, setPassword] = useState('');
+  const [userName, setUserName] = useState('MosheLevi');
+  const [password, setPassword] = useState('123');
   const [verifyPassword, setVerifyPassword] = useState('');
   const [message, setMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
