@@ -76,10 +76,10 @@ export async function enterAllPharmacies() {
   })
 }
 
-export function getLocation(locationId) {
+export function getLocationFromDb(locationId) {
   return {
     'id': locationId,
     'count': 5,
-    'name': 'Yigal Alon'
+    'name': 'יגאל אלון'
   }
 }
