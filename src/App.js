@@ -5,12 +5,16 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import MainScreen from './MainSceen'
 import Welcome from './Welcome'
 
+
 initializePharmecies()
 printAllUsers()
 
+
 export default function App() {
   let [user, setUser] = useState(null);
-  user = { userName: 'משה', password: "123", locationId: 5000 }
+  // user = { userName: 'ספיר', password: "123", locationId: 5000 }
+  // user = {}
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
       {user ? <MainScreen user={user} /> : <Welcome setUser={setUser} />}

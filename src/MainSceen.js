@@ -9,11 +9,7 @@ import pharmaciesDataFromJson from './data/pharmacy.json';
 
 
 export default function MainScreen(props) {
-
-
-
-
-
+  const [mode, setMode] = useState('confirmPresence');
   const [deviceLocation, setDeviceLocation] = useState(null);
 
   const { userName, password, locationId } = props.user
@@ -58,12 +54,24 @@ export default function MainScreen(props) {
     console.log(pharmacies)
 
 
+    const onSwitchMode = (x => {
+      if (mode == 'confirmPresence') {
+        setMode('confirmLeaving')
+      } else {
+        setMode('confirmPresence')
+      }
+    })
+
     const pharmeciesMarkers = filteredPharmacies.map((pharmecy) =>
       <Marker position={[pharmecy.y, pharmecy.x]}>
         <Popup>
-          {pharmecy.name} {pharmecy.distanceFromDevice}
+          <div style={{ textAlign: 'right' }} >
+            <h6>{pharmecy.name} - {pharmecy.distanceFromDevice} מטרים</h6>
+            <h8 >כמות אנשים : 25</h8>
+            <button className="btn btn-primary btn-block" style={{ background: "#ff8100", borderColor: "#858585", marginTop: "7px" }} onClick={onSwitchMode}>{mode === 'confirmPresence' ? 'אשר עזיבתך' : 'אשר נוכחותך'}</button>
+          </div>
         </Popup>
-      </Marker>
+      </Marker >
     )
 
 
@@ -102,15 +110,6 @@ export default function MainScreen(props) {
       </button>
     </div>
   </div>)
-
-  // const d = getDistance(
-  //   { latitude: 51.5103, longitude: 7.49347 },
-  //   { latitude: 51.5105, longitude: 7.49347 },
-
-  // );
-  // console.log(d);
-
-
 
 
   return (

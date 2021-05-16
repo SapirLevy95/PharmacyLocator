@@ -2,9 +2,11 @@ import "./App.css"
 import React, { useState } from 'react';
 import { logIn, signUp, printAllUsers, user_db, isUsernameExists } from './UserManagementUtils'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import logo from './images/logo.png'
+
 
 export default function Welcome(props) {
-  const [userName, setUserName] = useState('MosheLevi');
+  const [userName, setUserName] = useState('ספיר');
   const [password, setPassword] = useState('123');
   const [verifyPassword, setVerifyPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -25,7 +27,7 @@ export default function Welcome(props) {
     if (user) {
       setUser(user)
     } else {
-      setMessage('Wrong user name or password')
+      setMessage('שם המשתמש או הסיסמא אינו תקין')
       setPassword('')
     }
   }
@@ -33,25 +35,25 @@ export default function Welcome(props) {
   const onSignUp = async () => {
     cleanMessages()
     if (!userName || !password) {
-      setMessage('missing user or password')
+      setMessage('חסר שם משתמש או סיסמא')
       return
     }
 
     if (await isUsernameExists(userName)) {
-      setMessage('User is already exists')
+      setMessage('שם המשתמש כבר קיים')
       return
     }
 
 
     if (password != verifyPassword) {
       setVerifyPassword('')
-      setMessage('password and verify password are differnt')
+      setMessage('אימות הסיסמא אינו תקין')
       return
     }
     const user = await signUp(userName, password)
 
     if (user) {
-      setSuccessMessage('Sign up succeeded')
+      setSuccessMessage('נרשמת בהצלחה!')
       setMode('logIn')
       setPassword('')
 
@@ -73,30 +75,36 @@ export default function Welcome(props) {
     }
   })
 
-  const text = mode === 'logIn' ? 'Log in' : 'Sign up'
+
+
+  const text = mode === 'logIn' ? 'התחברות' : 'הרשמה'
   return (
-    <div className='box' style={{ width: '300px', padding: '10px' }}>
+    <div className='box' style={{ width: '300px', padding: '10px', margin: "auto" }}>
       <div>
-        <h3>Please {text}</h3>
-        <div style={{ textAlign: 'left', marginBottom: '10px' }}>
+        <div style={{ textAlign: 'center' }}>
+          <img src={logo} alt="Logo" />;
+        <h3>{text}</h3>
+        </div>
+
+        <div style={{ marginBottom: '10px', direction: "rtl" }}>
           <div style={{ padding: '5px' }}>
-            <label>Email address</label>
-            <input type="email" className="form-control" placeholder="Enter email" value={userName} onChange={e => setUserName(e.target.value)} />
+            <label>אימייל</label>
+            <input type="email" className="form-control" placeholder="הכנס אימייל" value={userName} onChange={e => setUserName(e.target.value)} />
           </div>
           <div style={{ padding: '5px' }}>
-            <label>Password</label>
-            <input type="password" className="form-control" placeholder="Enter password" value={password} onChange={e => setPassword(e.target.value)} />
+            <label>סיסמא</label>
+            <input type="password" className="form-control" placeholder="הכנס סיסמא" value={password} onChange={e => setPassword(e.target.value)} />
           </div>
           {mode == 'signUp' ?
             <div style={{ padding: '5px' }}>
-              <label>Verify Password</label>
-              <input type="password" className="form-control" placeholder="Enter password again" value={verifyPassword} onChange={e => setVerifyPassword(e.target.value)} />
+              <label>אמת סיסמא</label>
+              <input type="password" className="form-control" placeholder="אמת סיסמא" value={verifyPassword} onChange={e => setVerifyPassword(e.target.value)} />
             </div> : null}
         </div>
         {message ? <div className="alert alert-danger" role="alert">{message}</div > : null}
         {successMessage ? <div class="alert alert-success" role="alert">{successMessage}</div > : null}
-        <button className="btn btn-primary btn-block" onClick={mode === 'logIn' ? onLogIn : onSignUp}>{text}</button>
-        <button className="btn btn-primary btn-block" onClick={onSwitchMode}>{mode === 'logIn' ? 'Change to sign up' : 'Change to log in'}</button>
+        <button className="btn btn-primary btn-block" style={{ background: "#ff8100", borderColor: "#858585" }} onClick={mode === 'logIn' ? onLogIn : onSignUp}>{text}</button>
+        <button className="btn btn-primary btn-block" style={{ background: "#ff8100", borderColor: "#858585" }} onClick={onSwitchMode}>{mode === 'logIn' ? 'עבור להרשמה' : 'עבור להתחברות'}</button>
 
       </div>
     </div>

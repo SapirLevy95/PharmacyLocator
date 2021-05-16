@@ -1,4 +1,17 @@
 @import url('https://fonts.googleapis.com/css?family=Fira+Sans:400,500,600,700,800');
+@font-face {
+  font-family: 'Comixno2';
+  src: local('Comixno2'), url(./fonts/comixno2/comixno2clm_medium-webfont.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'ellinia';
+  src: local('ellinia'), url(./fonts/ellinia/elliniaclm-light-webfont.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'varelaRound';
+  src: local('varelaRound'), url(./fonts/Varela_Round/VarelaRound-Regular.ttf) format('truetype');
+}
+
 
 body {
   background: #1b2653 !important;
@@ -9,9 +22,10 @@ body {
   padding: 30px;
 }
 
-h1,h2,h3,h4,h5,h6,label,span {
+h1,h2,h3,h4,h5,h6,label,span,div {
   font-weight: 500;
-  font-family: 'Fira Sans', sans-serif;
+  font-family: "varelaRound";
+  text-align: "right"
 }
 
 body, html, .App, #root, .auth-wrapper {
