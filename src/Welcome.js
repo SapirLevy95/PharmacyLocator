@@ -6,7 +6,7 @@ import logo from './images/logo.png'
 
 
 export default function Welcome(props) {
-  const [userName, setUserName] = useState('ספיר');
+  const [userName, setUserName] = useState('ספיר לוי');
   const [password, setPassword] = useState('123');
   const [verifyPassword, setVerifyPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -79,7 +79,7 @@ export default function Welcome(props) {
 
   const text = mode === 'logIn' ? 'התחברות' : 'הרשמה'
   return (
-    <div className='box' style={{ width: '300px', padding: '10px', margin: "auto" }}>
+    <div className='box' style={{ width: '300px', padding: '10px', margin: "auto", textAlign: "right" }}>
       <div>
         <div style={{ textAlign: 'center' }}>
           <img src={logo} alt="Logo" />;
@@ -87,22 +87,22 @@ export default function Welcome(props) {
         </div>
 
         <div style={{ marginBottom: '10px', direction: "rtl" }}>
-          <div style={{ padding: '5px' }}>
-            <label>אימייל</label>
-            <input type="email" className="form-control" placeholder="הכנס אימייל" value={userName} onChange={e => setUserName(e.target.value)} />
+          <div style={{ padding: '5px', marginBottom: "7px" }}>
+            <label>שם משתמש</label>
+            <input type="email" className="form-control" placeholder="הכנס שם משתמש" value={userName} onChange={e => setUserName(e.target.value)} />
           </div>
-          <div style={{ padding: '5px' }}>
+          <div style={{ padding: '5px', marginBottom: "7px" }}>
             <label>סיסמא</label>
             <input type="password" className="form-control" placeholder="הכנס סיסמא" value={password} onChange={e => setPassword(e.target.value)} />
           </div>
           {mode == 'signUp' ?
-            <div style={{ padding: '5px' }}>
+            <div style={{ padding: '5px', marginBottom: "7px" }}>
               <label>אמת סיסמא</label>
               <input type="password" className="form-control" placeholder="אמת סיסמא" value={verifyPassword} onChange={e => setVerifyPassword(e.target.value)} />
             </div> : null}
         </div>
         {message ? <div className="alert alert-danger" role="alert">{message}</div > : null}
-        {successMessage ? <div class="alert alert-success" role="alert">{successMessage}</div > : null}
+        {successMessage ? <div className="alert alert-success" role="alert">{successMessage}</div > : null}
         <button className="btn btn-primary btn-block" style={{ background: "#ff8100", borderColor: "#858585" }} onClick={mode === 'logIn' ? onLogIn : onSignUp}>{text}</button>
         <button className="btn btn-primary btn-block" style={{ background: "#ff8100", borderColor: "#858585" }} onClick={onSwitchMode}>{mode === 'logIn' ? 'עבור להרשמה' : 'עבור להתחברות'}</button>
 

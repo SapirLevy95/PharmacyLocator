@@ -1,28 +1,48 @@
 import "./App.css"
 import React, { useState, useEffect } from 'react';
-import { getLocationFromDb } from './UserManagementUtils'
+import { getPharmacy, updateUserLocationInDb } from './UserManagementUtils'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import L from 'leaflet';
 import { getDistance } from 'geolib';
 import pharmaciesDataFromJson from './data/pharmacy.json';
 
 
-
 export default function MainScreen(props) {
-  const [mode, setMode] = useState('confirmPresence');
+  const [data, setData] = useState({
+    user: props.user,
+    pharmacy: null,
+  });
   const [deviceLocation, setDeviceLocation] = useState(null);
+  const { user, pharmacy } = data
 
-  const { userName, password, locationId } = props.user
-  const location = getLocationFromDb(locationId)
-
+  // useEffect(() => {
+  //   this.map = useMap()
+  // })
   let mapComponent = null
   let pharmacyListCompoent = null
+  console.log('deviceLocation')
+  console.log(deviceLocation)
+
+
+  if (!pharmacy && user.locationId) {
+    getPharmacy(user.locationId).then((updatedPharmacy) => {
+      setData({
+        user: user,
+        pharmacy: updatedPharmacy
+      })
+    })
+  }
+
+  const changePharmacy = async (ClickedPharmecy) => {
+    const newLocation = user.locationId == ClickedPharmecy.id ? null : ClickedPharmecy.id
+    const updatedUser = await updateUserLocationInDb(newLocation, user)
+    const updatedPharmacy = await getPharmacy(updatedUser.locationId)
+    setData({ user: updatedUser, pharmacy: updatedPharmacy })
+  }
+
   if (deviceLocation) {
     const x = deviceLocation.coords.latitude
     const y = deviceLocation.coords.longitude
-
-    console.log(pharmaciesDataFromJson)
-
     const pharmacies = pharmaciesDataFromJson.map((pharmecy) => {
       return {
         name: pharmecy.properties.name,
@@ -35,11 +55,36 @@ export default function MainScreen(props) {
       }
     })
 
-    console.log(pharmacies)
+
     let filteredPharmacies = pharmacies.filter((pharmecy) => pharmecy.distanceFromDevice < 5000 && pharmecy.name && pharmecy.name != '')
     filteredPharmacies = filteredPharmacies.sort((pharmecy1, pharmecy2) => pharmecy1.distanceFromDevice - pharmecy2.distanceFromDevice)
-    const pharmaciesComponent = filteredPharmacies.map((pharmecy) => <button type="button" class="btn btn-light" style={{ textAlign: "right", margin: "1px", background: "#ff8100", borderColor: "#ff8100", width: "400px" }}>{pharmecy.name} ({pharmecy.distanceFromDevice} מטרים)</button>
+    const pharmaciesComponent = filteredPharmacies.map((pharmecy) => (
+      <button type="button"
+        className="btn btn-light"
+        onClick={() => onPharmacyClicked(pharmecy)}
+        style={{
+          textAlign: "right",
+          margin: "1px",
+          background: "#ff8100",
+          borderColor: "#ff8100",
+          width: "400px"
+        }}>{pharmecy.name} ({pharmecy.distanceFromDevice} מטרים)</button>)
     )
+
+    const pharmeciesMarkers = filteredPharmacies.map((pharmecy) =>
+      <Marker id={pharmecy.id} position={[pharmecy.y, pharmecy.x]}>
+        <Popup>
+          <div style={{ textAlign: 'right' }} >
+            <h6>{pharmecy.name} - {pharmecy.distanceFromDevice} מטרים</h6>
+            <button className="btn btn-primary btn-block" style={{ background: "#ff8100", borderColor: "#858585", marginTop: "7px" }}
+              onClick={async () => changePharmacy(pharmecy)}>{user.locationId === pharmecy.id ? "אשר עזיבתך" : "אשר נוכחותך"}</button>
+          </div>
+        </Popup>
+      </Marker >
+    )
+
+
+
 
     pharmacyListCompoent = (
       <div style={{ direction: 'rtl' }}>
@@ -51,28 +96,7 @@ export default function MainScreen(props) {
 
     )
 
-    console.log(pharmacies)
 
-
-    const onSwitchMode = (x => {
-      if (mode == 'confirmPresence') {
-        setMode('confirmLeaving')
-      } else {
-        setMode('confirmPresence')
-      }
-    })
-
-    const pharmeciesMarkers = filteredPharmacies.map((pharmecy) =>
-      <Marker position={[pharmecy.y, pharmecy.x]}>
-        <Popup>
-          <div style={{ textAlign: 'right' }} >
-            <h6>{pharmecy.name} - {pharmecy.distanceFromDevice} מטרים</h6>
-            <h8 >כמות אנשים : 25</h8>
-            <button className="btn btn-primary btn-block" style={{ background: "#ff8100", borderColor: "#858585", marginTop: "7px" }} onClick={onSwitchMode}>{mode === 'confirmPresence' ? 'אשר עזיבתך' : 'אשר נוכחותך'}</button>
-          </div>
-        </Popup>
-      </Marker >
-    )
 
 
     var myDeviceLocationMarker = L.icon({
@@ -94,21 +118,46 @@ export default function MainScreen(props) {
         {pharmeciesMarkers}
       </MapContainer>
     </div>)
+
+    // const onPharmacyClicked = (clickedPharmecy) => {
+    //   console.log(`Pharmacy ${clickedPharmecy} clicked`)
+    //   console.log(clickedPharmecy)
+    //   console.log(pharmeciesMarkers)
+    //   for (var markerPosition in pharmeciesMarkers) {
+    //     const marker = pharmeciesMarkers[markerPosition]
+    //     var pharmecyId = marker.props.id;
+    //     if (pharmecyId == clickedPharmecy.id) {
+    //       this.map.setView([clickedPharmecy.y, clickedPharmecy.x], 11, { animation: true });
+    //       // marker.openPopup();
+    //     };
+    //   }
+    // }
+
   } else {
     navigator.geolocation.getCurrentPosition((position) => { setDeviceLocation(position) })
     const mapComponent = null
     pharmacyListCompoent = null
   }
 
+  let comment
+  if (pharmacy) {
+    comment = (
+      <div style={{ padding: '10px' }}>
+        <h4 style={{ color: "white", direction: "rtl" }}> אתה ממוקם ב{pharmacy.name} עם עוד {pharmacy.count} אנשים.</h4>
+        <button style={{ background: '#ff8100' }} className="btn btn-block" onClick={async () => { changePharmacy(pharmacy) }}>
+          אני לא כאן
+      </button>
+      </div>)
+  }
+  else {
+    comment = <h4 style={{ color: "white", direction: "rtl" }}> אתה לא נמצא בשום בית מרקחת.
+  </h4>
+  }
+
 
   const userLocationStatusCompoent = (<div style={{ padding: '10px' }} >
-    <h3 style={{ textAlign: 'center', color: "white" }}> ,היי {userName}</h3>
-    <h4 style={{ color: "white", direction: "rtl" }}> אתה ממוקם ב{location.name} עם עוד {location.count} אנשים.</h4>
-    <div style={{ padding: '10px' }}>
-      <button style={{ background: '#ff8100' }} className="btn btn-block" onClick={() => { console.log('on click Im not here') }}>
-        אני לא כאן
-      </button>
-    </div>
+    <h3 style={{ textAlign: 'center', color: "white" }}> ,היי {user.userName}</h3>
+    {comment}
   </div>)
 
 
