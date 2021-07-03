@@ -1,6 +1,9 @@
 import "./App.css";
 import React, { useState } from "react";
-import { getPharmacy, updateUserLocationInDb } from "./UserManagementUtils";
+import {
+  getPharmacyFromDB as getPharmacyFromDB,
+  updateUserLocationInDb,
+} from "./UserManagementUtils";
 import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
 import L from "leaflet";
 import { getDistance } from "geolib";
@@ -23,7 +26,7 @@ export default function MainScreen(props) {
   }
 
   if (!pharmacy && user.locationId) {
-    getPharmacy(user.locationId).then((updatedPharmacy) => {
+    getPharmacyFromDB(user.locationId).then((updatedPharmacy) => {
       setData({
         user: user,
         pharmacy: updatedPharmacy,
@@ -35,28 +38,33 @@ export default function MainScreen(props) {
     const newLocation =
       user.locationId == ClickedPharmecy.id ? null : ClickedPharmecy.id;
     const updatedUser = await updateUserLocationInDb(newLocation, user);
-    const updatedPharmacy = await getPharmacy(updatedUser.locationId);
+    const updatedPharmacy = await getPharmacyFromDB(updatedUser.locationId);
     setData({ user: updatedUser, pharmacy: updatedPharmacy });
   };
 
-  const x = deviceLocation ? deviceLocation.coords.latitude : null;
-  const y = deviceLocation ? deviceLocation.coords.longitude : null;
+  const deviceLocationX = deviceLocation
+    ? deviceLocation.coords.latitude
+    : null;
+  const deviceLocationY = deviceLocation
+    ? deviceLocation.coords.longitude
+    : null;
   const pharmacies = pharmaciesDataFromJson.map((pharmecy) => {
+    const distance =
+      deviceLocationX && deviceLocationY
+        ? getDistance(
+            {
+              latitude: pharmecy.geometry.coordinates[1],
+              longitude: pharmecy.geometry.coordinates[0],
+            },
+            { latitude: deviceLocationX, longitude: deviceLocationY }
+          )
+        : null;
     return {
       name: pharmecy.properties.name,
       id: pharmecy.properties.osm_id,
       x: pharmecy.geometry.coordinates[0],
       y: pharmecy.geometry.coordinates[1],
-      distanceFromDevice:
-        x && y
-          ? getDistance(
-              {
-                latitude: pharmecy.geometry.coordinates[1],
-                longitude: pharmecy.geometry.coordinates[0],
-              },
-              { latitude: x, longitude: y }
-            )
-          : null,
+      distanceFromDevice: distance,
     };
   });
 
@@ -136,7 +144,10 @@ export default function MainScreen(props) {
   });
 
   const deviceMarker = deviceLocation ? (
-    <Marker icon={myDeviceLocationMarker} position={[x, y]}>
+    <Marker
+      icon={myDeviceLocationMarker}
+      position={[deviceLocationX, deviceLocationY]}
+    >
       <Popup>אתה נמצא כאן</Popup>
     </Marker>
   ) : null;
@@ -144,7 +155,7 @@ export default function MainScreen(props) {
   const mapComponent = (
     <div style={{ background: "white" }}>
       <MapContainer
-        center={[x, y]}
+        center={[deviceLocationX, deviceLocationY]}
         zoom={12}
         style={{ height: "400px" }}
         whenCreated={setMap}
@@ -153,7 +164,7 @@ export default function MainScreen(props) {
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Circle center={[x, y]} radius={DISTANCE} />
+        <Circle center={[deviceLocationX, deviceLocationY]} radius={DISTANCE} />
         {deviceMarker}
         {pharmeciesMarkers}
       </MapContainer>

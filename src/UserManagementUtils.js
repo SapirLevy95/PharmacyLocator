@@ -34,7 +34,7 @@ export async function isUsernameExists(userName) {
   }
 }
 
-export async function logIn(userName, passowrd) {
+export async function getUserFromDB(userName, passowrd) {
   let user;
   if (userName) {
     if (await isUsernameExists(userName)) {
@@ -54,7 +54,7 @@ export async function logIn(userName, passowrd) {
   }
 }
 
-export async function signUp(userName, passowrd) {
+export async function addUserToDB(userName, passowrd) {
   var user = {
     _id: userName,
     userName: userName,
@@ -106,7 +106,7 @@ export async function updateUserLocationInDb(pharmacyId, user) {
   return updatedUser;
 }
 
-export async function getPharmacy(pharmacyId) {
+export async function getPharmacyFromDB(pharmacyId) {
   if (!pharmacyId) {
     return null;
   }

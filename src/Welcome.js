@@ -1,8 +1,8 @@
 import "./App.css";
 import React, { useState } from "react";
 import {
-  logIn,
-  signUp,
+  getUserFromDB,
+  addUserToDB,
   printAllUsers,
   user_db,
   isUsernameExists,
@@ -17,8 +17,6 @@ export default function Welcome(props) {
   const [message, setMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [mode, setMode] = useState("logIn");
-
-  // const { setUser } = props
   const setUser = props.setUser;
 
   const cleanMessages = () => {
@@ -28,7 +26,7 @@ export default function Welcome(props) {
 
   const onLogIn = async () => {
     cleanMessages();
-    const user = await logIn(userName, password);
+    const user = await getUserFromDB(userName, password);
     if (user) {
       setUser(user);
     } else {
@@ -54,7 +52,7 @@ export default function Welcome(props) {
       setMessage("אימות הסיסמא אינו תקין");
       return;
     }
-    const user = await signUp(userName, password);
+    const user = await addUserToDB(userName, password);
 
     if (user) {
       setSuccessMessage("נרשמת בהצלחה!");
@@ -77,7 +75,7 @@ export default function Welcome(props) {
     }
   };
 
-  const text = mode === "logIn" ? "התחברות" : "הרשמה";
+  // const text = mode === "logIn" ? "התחברות" : "הרשמה";
   return (
     <div
       className="box"
@@ -91,7 +89,7 @@ export default function Welcome(props) {
       <div>
         <div style={{ textAlign: "center" }}>
           <img src={logo} alt="Logo" />
-          <h3>{text}</h3>
+          <h3>{mode === "logIn" ? "התחברות" : "הרשמה"}</h3>
         </div>
 
         <div style={{ marginBottom: "10px", direction: "rtl" }}>
@@ -143,7 +141,7 @@ export default function Welcome(props) {
           style={{ background: "#ff8100", borderColor: "#858585" }}
           onClick={mode === "logIn" ? onLogIn : onSignUp}
         >
-          {text}
+          {mode === "logIn" ? "התחברות" : "הרשמה"}
         </button>
         <button
           className="btn btn-primary btn-block"
