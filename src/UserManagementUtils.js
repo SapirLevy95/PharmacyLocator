@@ -5,7 +5,6 @@ import pharmaciesData from './data/pharmacy_data.json';
 export const user_db = new PouchDB('users');
 //userName,passowrd,locationId
 export const pharmacies_db = new PouchDB('pharmacies');
-//id, name ,
 
 export function initializePharmecies() {
   pharmacies_db.info().then(function (result) {
@@ -13,10 +12,6 @@ export function initializePharmecies() {
       console.log('Its empty!');
       enterAllPharmacies()
     }
-    // pharmacies_db.allDocs({ include_docs: true }).then((results) => {
-    //   console.log('All pharmacies:')
-    //   conso  le.log(results.rows)
-    // })
 
   });
 }
