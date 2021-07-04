@@ -18,6 +18,7 @@ export default function MainScreen(props) {
   const [deviceLocation, setDeviceLocation] = useState(null);
   const { user, pharmacy } = data;
   const [map, setMap] = useState(null);
+  const setUser = props.setUser;
 
   if (!deviceLocation) {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -231,8 +232,21 @@ export default function MainScreen(props) {
     </div>
   );
 
+  const backToLogInPage = () => {
+    setUser(null);
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
+      <div>
+        <button
+          className="btn btn-light"
+          style={{ borderRadius: "50px", height: "50px", opacity: "0.95" }}
+          onClick={backToLogInPage}
+        >
+          Back
+        </button>
+      </div>
       <div>
         <h1 style={{ color: "white", textAlign: "center" }}>מצא בית מרקחת</h1>
       </div>
