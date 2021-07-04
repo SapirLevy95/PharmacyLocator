@@ -119,21 +119,18 @@ export default function MainScreen(props) {
   ));
 
   const pharmacyListCompoent = (
-    <div style={{ direction: "rtl" }}>
-      <h4 style={{ color: "white" }}>בתי מרקחת באיזורך (עד 5 ק"מ)</h4>
-      <div
-        style={{
-          textAlign: "right",
-          overflowX: "hidden",
-          overflowY: "scroll",
-          height: "250px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "end",
-        }}
-      >
-        {pharmaciesComponent}
-      </div>
+    <div
+      style={{
+        textAlign: "right",
+        overflowX: "hidden",
+        overflowY: "scroll",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        height: "350px",
+      }}
+    >
+      {pharmaciesComponent}
     </div>
   );
 
@@ -153,11 +150,13 @@ export default function MainScreen(props) {
   ) : null;
 
   const mapComponent = (
-    <div style={{ background: "white" }}>
+    <div
+      style={{ background: "white", borderRadius: "30px", marginRight: "10px" }}
+    >
       <MapContainer
         center={[deviceLocationX, deviceLocationY]}
         zoom={12}
-        style={{ height: "400px" }}
+        style={{ height: "600px", borderRadius: "30px" }}
         whenCreated={setMap}
       >
         <TileLayer
@@ -215,7 +214,15 @@ export default function MainScreen(props) {
   }
 
   const userLocationStatusCompoent = (
-    <div style={{ padding: "10px" }}>
+    <div
+      style={{
+        padding: "10px",
+        padding: "10px",
+        background: "#84cbf563",
+        borderRadius: "30px",
+        marginBottom: "10px",
+      }}
+    >
       <h3 style={{ textAlign: "center", color: "white" }}>
         {" "}
         ,היי {user.userName}
@@ -225,27 +232,36 @@ export default function MainScreen(props) {
   );
 
   return (
-    <div
-      style={{
-        textAlign: "right",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "stretch",
-      }}
-    >
+    <div style={{ display: "flex", flexDirection: "column" }}>
       <div>
-        <h1 style={{ color: "white", textAlign: "right" }}>מצא בית מרקחת</h1>
+        <h1 style={{ color: "white", textAlign: "center" }}>מצא בית מרקחת</h1>
       </div>
-      <div>
-        <div style={{ display: "flex", alignItems: "stretch" }}>
-          <div style={{ flex: 1 }}>{userLocationStatusCompoent}</div>
-          <div style={{ flex: 3 }}>
-            <div>
-              {pharmacyListCompoent}
-              {deviceLocation ? mapComponent : null}
-            </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row-reverse",
+          height: "600px",
+        }}
+      >
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div>{userLocationStatusCompoent}</div>
+          <div
+            style={{
+              flex: 1,
+              position: "relative",
+              height: "300px",
+              background: "#84cbf563",
+              borderRadius: "30px",
+              padding: "20px",
+            }}
+          >
+            <h4 style={{ color: "white", textAlign: "right" }}>
+              בתי מרקחת באיזורך (עד 5 ק"מ)
+            </h4>
+            {pharmacyListCompoent}
           </div>
         </div>
+        <div style={{ flex: 3 }}>{deviceLocation ? mapComponent : null}</div>
       </div>
     </div>
   );
