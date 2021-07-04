@@ -190,7 +190,7 @@ export default function MainScreen(props) {
   if (pharmacy) {
     comment = (
       <div style={{ padding: "10px" }}>
-        <h4 style={{ color: "white", direction: "rtl" }}>
+        <h4 style={{ color: "white", direction: "rtl", textAlign: "center" }}>
           {" "}
           אתה ממוקם ב{pharmacy.name} עם עוד {pharmacy.count} אנשים.
         </h4>
@@ -207,7 +207,7 @@ export default function MainScreen(props) {
     );
   } else {
     comment = (
-      <h4 style={{ color: "white", direction: "rtl" }}>
+      <h4 style={{ color: "white", direction: "rtl", textAlign: "center" }}>
         {" "}
         אתה לא נמצא בשום בית מרקחת.
       </h4>
@@ -218,10 +218,10 @@ export default function MainScreen(props) {
     <div
       style={{
         padding: "10px",
-        padding: "10px",
         background: "#84cbf563",
         borderRadius: "30px",
         marginBottom: "10px",
+        height: "170px",
       }}
     >
       <h3 style={{ textAlign: "center", color: "white" }}>
@@ -257,7 +257,9 @@ export default function MainScreen(props) {
           height: "600px",
         }}
       >
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div
+          style={{ display: "flex", flexDirection: "column", width: "485px" }}
+        >
           <div>{userLocationStatusCompoent}</div>
           <div
             style={{
