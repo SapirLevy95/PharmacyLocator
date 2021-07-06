@@ -125,3 +125,15 @@ export async function getPharmacyFromDB(pharmacyId) {
 
   return pharmacy;
 }
+
+export async function getPharmaciesCountFromDB() {
+  const users = await (await user_db.allDocs({ include_docs: true })).rows;
+  const pharmacyCount = {};
+  users.map((user) => {
+    const pharmacyId = user.doc.locationId;
+    if (pharmacyId) {
+      pharmacyCount[pharmacyId] = (pharmacyCount[pharmacyId] || 0) + 1;
+    }
+  });
+  return pharmacyCount;
+}

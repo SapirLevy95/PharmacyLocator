@@ -1,8 +1,9 @@
 import "./App.css";
 import React, { useState } from "react";
 import {
-  getPharmacyFromDB as getPharmacyFromDB,
+  getPharmacyFromDB,
   updateUserLocationInDb,
+  getPharmaciesCountFromDB,
 } from "./UserManagementUtils";
 import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
 import L from "leaflet";
@@ -12,8 +13,10 @@ import pharmaciesDataFromJson from "./data/pharmacy.json";
 const DISTANCE = 5000;
 export default function MainScreen(props) {
   const [data, setData] = useState({
+    isInit: false,
     user: props.user,
     pharmacy: null,
+    pharmaciesCount: {},
   });
   const [deviceLocation, setDeviceLocation] = useState(null);
   const { user, pharmacy } = data;
@@ -26,13 +29,20 @@ export default function MainScreen(props) {
     });
   }
 
-  if (!pharmacy && user.locationId) {
-    getPharmacyFromDB(user.locationId).then((updatedPharmacy) => {
-      setData({
-        user: user,
-        pharmacy: updatedPharmacy,
-      });
+  const asyncFetchDataFromDB = async () => {
+    const updatedPharmacy = await getPharmacyFromDB(user.locationId);
+    const pharmaciesCount = await getPharmaciesCountFromDB();
+    setData({
+      isInit: true,
+      user: user,
+      pharmacy: updatedPharmacy,
+      pharmaciesCount: pharmaciesCount,
     });
+  };
+
+  if (!data.isInit) {
+    asyncFetchDataFromDB();
+    return <div>Loading...</div>;
   }
 
   const changePharmacy = async (ClickedPharmecy) => {
@@ -40,9 +50,20 @@ export default function MainScreen(props) {
       user.locationId == ClickedPharmecy.id ? null : ClickedPharmecy.id;
     const updatedUser = await updateUserLocationInDb(newLocation, user);
     const updatedPharmacy = await getPharmacyFromDB(updatedUser.locationId);
-    setData({ user: updatedUser, pharmacy: updatedPharmacy });
+    const pharmaciesCount = await getPharmaciesCountFromDB();
+    setData({
+      user: updatedUser,
+      pharmacy: updatedPharmacy,
+      pharmaciesCount: pharmaciesCount,
+      isInit: true,
+    });
   };
 
+  const getPharmacyCount = (pharmacy) => {
+    return (
+      (data.pharmaciesCount ? data.pharmaciesCount[pharmacy.id] : null) || 0
+    );
+  };
   const deviceLocationX = deviceLocation
     ? deviceLocation.coords.latitude
     : null;
@@ -81,6 +102,7 @@ export default function MainScreen(props) {
   );
   const pharmaciesComponent = filteredPharmacies.map((pharmecy) => (
     <button
+      id={pharmecy.id}
       type="button"
       className="btn btn-light"
       onClick={() => onPharmacyClicked(pharmecy)}
@@ -92,7 +114,8 @@ export default function MainScreen(props) {
         width: "400px",
       }}
     >
-      {pharmecy.name} ({pharmecy.distanceFromDevice} מטרים)
+      {pharmecy.name} ({pharmecy.distanceFromDevice} מטרים,{" "}
+      {getPharmacyCount(pharmecy)} אנשים)
     </button>
   ));
 
@@ -103,7 +126,10 @@ export default function MainScreen(props) {
           <h6>
             {pharmecy.name} - {pharmecy.distanceFromDevice} מטרים
           </h6>
-          <h8> {pharmacy.count || 0} כמות האנשים בבית מרקחת כרגע הוא </h8>
+          <div>
+            {" "}
+            {getPharmacyCount(pharmecy)} כמות האנשים בבית מרקחת כרגע הוא{" "}
+          </div>
           <button
             className="btn btn-primary btn-block"
             style={{
@@ -173,9 +199,6 @@ export default function MainScreen(props) {
   );
 
   const onPharmacyClicked = (clickedPharmecy) => {
-    console.log(`Pharmacy ${clickedPharmecy} clicked`);
-    console.log(clickedPharmecy);
-    console.log(pharmeciesMarkers);
     for (var markerPosition in pharmeciesMarkers) {
       const marker = pharmeciesMarkers[markerPosition];
       var pharmecyId = marker.props.id;
