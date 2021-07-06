@@ -71,6 +71,7 @@ export async function enterAllPharmacies() {
     var pharmecyFromDict = {
       _id: pharmecy.id,
       name: pharmecy.name,
+      count: 0,
     };
     await pharmacies_db.put(pharmecyFromDict);
   });

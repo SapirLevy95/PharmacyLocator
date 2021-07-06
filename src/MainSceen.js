@@ -103,6 +103,7 @@ export default function MainScreen(props) {
           <h6>
             {pharmecy.name} - {pharmecy.distanceFromDevice} מטרים
           </h6>
+          <h8> {pharmacy.count || 0} כמות האנשים בבית מרקחת כרגע הוא </h8>
           <button
             className="btn btn-primary btn-block"
             style={{
@@ -152,12 +153,12 @@ export default function MainScreen(props) {
 
   const mapComponent = (
     <div
-      style={{ background: "white", borderRadius: "30px", marginRight: "10px" }}
+      style={{ background: "white", borderRadius: "5px", marginRight: "10px" }}
     >
       <MapContainer
         center={[deviceLocationX, deviceLocationY]}
         zoom={12}
-        style={{ height: "600px", borderRadius: "30px" }}
+        style={{ height: "600px", borderRadius: "5px" }}
         whenCreated={setMap}
       >
         <TileLayer
@@ -219,7 +220,7 @@ export default function MainScreen(props) {
       style={{
         padding: "10px",
         background: "#84cbf563",
-        borderRadius: "30px",
+        borderRadius: "5px",
         marginBottom: "10px",
         height: "170px",
       }}
@@ -267,7 +268,7 @@ export default function MainScreen(props) {
               position: "relative",
               height: "300px",
               background: "#84cbf563",
-              borderRadius: "30px",
+              borderRadius: "5px",
               padding: "20px",
             }}
           >
