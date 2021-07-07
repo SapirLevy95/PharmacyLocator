@@ -114,8 +114,8 @@ export default function MainScreen(props) {
         width: "400px",
       }}
     >
-      {pharmecy.name} ({pharmecy.distanceFromDevice} מטרים,{" "}
-      {getPharmacyCount(pharmecy)} אנשים)
+      {pharmecy.name} ({pharmecy.distanceFromDevice} meters,{" "}
+      {getPharmacyCount(pharmecy)} people)
     </button>
   ));
 
@@ -207,7 +207,6 @@ export default function MainScreen(props) {
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Circle center={[deviceLocationX, deviceLocationY]} radius={DISTANCE} />
 
         {deviceMarker}
         {pharmeciesMarkers}

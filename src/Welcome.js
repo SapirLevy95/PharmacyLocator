@@ -11,8 +11,8 @@ import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import logo from "./images/logo.png";
 
 export default function Welcome(props) {
-  const [userName, setUserName] = useState("1");
-  const [password, setPassword] = useState("1");
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
   const [message, setMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
