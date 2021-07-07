@@ -6,7 +6,7 @@ import {
   getPharmaciesCountFromDB,
 } from "./UserManagementUtils";
 import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
-import L from "leaflet";
+import L, { icon } from "leaflet";
 import { getDistance } from "geolib";
 import pharmaciesDataFromJson from "./data/pharmacy.json";
 
@@ -119,32 +119,54 @@ export default function MainScreen(props) {
     </button>
   ));
 
-  const pharmeciesMarkers = filteredPharmacies.map((pharmecy) => (
-    <Marker id={pharmecy.id} position={[pharmecy.y, pharmecy.x]}>
-      <Popup>
-        <div style={{ textAlign: "right" }}>
-          <h6>
-            {pharmecy.name} - {pharmecy.distanceFromDevice} מטרים
-          </h6>
-          <div>
-            {" "}
-            {getPharmacyCount(pharmecy)} כמות האנשים בבית מרקחת כרגע הוא{" "}
+  var pharmecyMarkerIcan = L.icon({
+    iconUrl: "https://image.flaticon.com/icons/png/512/1453/1453644.png",
+    iconSize: [40, 40],
+  });
+  var superPharmMarkerIcan = L.icon({
+    iconUrl:
+      "https://service.tlvmall.com/Uploads//Stores/%D7%A1%D7%95%D7%A4%D7%A8%20%D7%A4%D7%90%D7%A8%D7%9D/logo_super-pharm.png",
+    iconSize: [40, 40],
+  });
+  var myDeviceLocationMarker = L.icon({
+    iconUrl:
+      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+    iconSize: [30, 50],
+  });
+
+  const pharmeciesMarkers = filteredPharmacies.map((pharmecy) => {
+    const icon = pharmecy.name.includes("סופר")
+      ? superPharmMarkerIcan
+      : pharmecyMarkerIcan;
+    return (
+      <Marker id={pharmecy.id} position={[pharmecy.y, pharmecy.x]} icon={icon}>
+        <Popup>
+          <div style={{ textAlign: "center" }}>
+            <h6>{pharmecy.name}</h6>
+            <h7>{pharmecy.distanceFromDevice} meters</h7>
+            <div>
+              {" "}
+              The amount of people at this pharmacy is{" "}
+              {getPharmacyCount(pharmecy)}
+            </div>
+            <button
+              className="btn btn-primary btn-block"
+              style={{
+                background: "#ff8100",
+                borderColor: "#858585",
+                marginTop: "7px",
+              }}
+              onClick={async () => changePharmacy(pharmecy)}
+            >
+              {user.locationId === pharmecy.id
+                ? "Confirm your living"
+                : "Confirm your presence"}
+            </button>
           </div>
-          <button
-            className="btn btn-primary btn-block"
-            style={{
-              background: "#ff8100",
-              borderColor: "#858585",
-              marginTop: "7px",
-            }}
-            onClick={async () => changePharmacy(pharmecy)}
-          >
-            {user.locationId === pharmecy.id ? "אשר עזיבתך" : "אשר נוכחותך"}
-          </button>
-        </div>
-      </Popup>
-    </Marker>
-  ));
+        </Popup>
+      </Marker>
+    );
+  });
 
   const pharmacyListCompoent = (
     <div
@@ -162,24 +184,18 @@ export default function MainScreen(props) {
     </div>
   );
 
-  var myDeviceLocationMarker = L.icon({
-    iconUrl:
-      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-    iconSize: [30, 50],
-  });
-
   const deviceMarker = deviceLocation ? (
     <Marker
       icon={myDeviceLocationMarker}
       position={[deviceLocationX, deviceLocationY]}
     >
-      <Popup>אתה נמצא כאן</Popup>
+      <Popup>Your'e here</Popup>
     </Marker>
   ) : null;
 
   const mapComponent = (
     <div
-      style={{ background: "white", borderRadius: "5px", marginRight: "10px" }}
+      style={{ background: "white", borderRadius: "5px", marginLeft: "10px" }}
     >
       <MapContainer
         center={[deviceLocationX, deviceLocationY]}
@@ -192,6 +208,7 @@ export default function MainScreen(props) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <Circle center={[deviceLocationX, deviceLocationY]} radius={DISTANCE} />
+
         {deviceMarker}
         {pharmeciesMarkers}
       </MapContainer>
@@ -214,10 +231,12 @@ export default function MainScreen(props) {
   if (pharmacy) {
     comment = (
       <div style={{ padding: "10px" }}>
-        <h4 style={{ color: "white", direction: "rtl", textAlign: "center" }}>
-          {" "}
-          אתה ממוקם ב{pharmacy.name} עם עוד {pharmacy.count} אנשים.
-        </h4>
+        <div style={{ color: "white", direction: "rtl", textAlign: "left" }}>
+          <h7>
+            {" "}
+            with {pharmacy.count} people {pharmacy.name} :Your'e located in
+          </h7>
+        </div>
         <button
           style={{ background: "#ff8100" }}
           className="btn btn-block"
@@ -225,7 +244,7 @@ export default function MainScreen(props) {
             changePharmacy(pharmacy);
           }}
         >
-          אני לא כאן
+          I'm not here
         </button>
       </div>
     );
@@ -233,7 +252,7 @@ export default function MainScreen(props) {
     comment = (
       <h4 style={{ color: "white", direction: "rtl", textAlign: "center" }}>
         {" "}
-        אתה לא נמצא בשום בית מרקחת.
+        Your'e not in a pharmacy...yet
       </h4>
     );
   }
@@ -250,7 +269,7 @@ export default function MainScreen(props) {
     >
       <h3 style={{ textAlign: "center", color: "white" }}>
         {" "}
-        ,היי {user.userName}
+        Hello {user.userName}
       </h3>
       {comment}
     </div>
@@ -272,7 +291,7 @@ export default function MainScreen(props) {
         </button>
       </div>
       <div>
-        <h1 style={{ color: "white", textAlign: "center" }}>מצא בית מרקחת</h1>
+        <h1 style={{ color: "white", textAlign: "center" }}>Find a pharmacy</h1>
       </div>
       <div
         style={{
@@ -281,6 +300,7 @@ export default function MainScreen(props) {
           height: "600px",
         }}
       >
+        <div style={{ flex: 3 }}>{deviceLocation ? mapComponent : null}</div>
         <div
           style={{ display: "flex", flexDirection: "column", width: "485px" }}
         >
@@ -296,12 +316,11 @@ export default function MainScreen(props) {
             }}
           >
             <h4 style={{ color: "white", textAlign: "right" }}>
-              בתי מרקחת באיזורך (עד 5 ק"מ)
+              Pharmacies in your area (up to 5 km)
             </h4>
             {pharmacyListCompoent}
           </div>
         </div>
-        <div style={{ flex: 3 }}>{deviceLocation ? mapComponent : null}</div>
       </div>
     </div>
   );

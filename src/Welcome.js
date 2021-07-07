@@ -11,8 +11,8 @@ import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import logo from "./images/logo.png";
 
 export default function Welcome(props) {
-  const [userName, setUserName] = useState("ספיר לוי");
-  const [password, setPassword] = useState("123");
+  const [userName, setUserName] = useState("1");
+  const [password, setPassword] = useState("1");
   const [verifyPassword, setVerifyPassword] = useState("");
   const [message, setMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -30,7 +30,7 @@ export default function Welcome(props) {
     if (user) {
       setUser(user);
     } else {
-      setMessage("שם המשתמש או הסיסמא אינו תקין");
+      setMessage("User name or password is invalid");
       setPassword("");
     }
   };
@@ -38,24 +38,24 @@ export default function Welcome(props) {
   const onSignUp = async () => {
     cleanMessages();
     if (!userName || !password) {
-      setMessage("חסר שם משתמש או סיסמא");
+      setMessage("Username or password is");
       return;
     }
 
     if (await isUsernameExists(userName)) {
-      setMessage("שם המשתמש כבר קיים");
+      setMessage("The username is already exists");
       return;
     }
 
     if (password != verifyPassword) {
       setVerifyPassword("");
-      setMessage("אימות הסיסמא אינו תקין");
+      setMessage("Password confirmation isn't correct");
       return;
     }
     const user = await addUserToDB(userName, password);
 
     if (user) {
-      setSuccessMessage("נרשמת בהצלחה!");
+      setSuccessMessage("You have succsesfully registered");
       setMode("logIn");
       setPassword("");
     } else {
@@ -75,7 +75,7 @@ export default function Welcome(props) {
     }
   };
 
-  // const text = mode === "logIn" ? "התחברות" : "הרשמה";
+  // const text = mode === "logIn" ? "Log In" : "Sign Up";
   return (
     <div
       className="box"
@@ -83,43 +83,43 @@ export default function Welcome(props) {
         width: "300px",
         padding: "10px",
         margin: "auto",
-        textAlign: "right",
+        textAlign: "left",
       }}
     >
       <div>
         <div style={{ textAlign: "center" }}>
           <img src={logo} alt="Logo" />
-          <h3>{mode === "logIn" ? "התחברות" : "הרשמה"}</h3>
+          <h3>{mode === "logIn" ? "Log In" : "Sign Up"}</h3>
         </div>
 
-        <div style={{ marginBottom: "10px", direction: "rtl" }}>
+        <div style={{ marginBottom: "10px" }}>
           <div style={{ padding: "5px", marginBottom: "7px" }}>
-            <label>שם משתמש</label>
+            <label>Username</label>
             <input
               type="email"
               className="form-control"
-              placeholder="הכנס שם משתמש"
+              placeholder="Enter a username"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
             />
           </div>
           <div style={{ padding: "5px", marginBottom: "7px" }}>
-            <label>סיסמא</label>
+            <label>Password</label>
             <input
               type="password"
               className="form-control"
-              placeholder="הכנס סיסמא"
+              placeholder="Enter password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           {mode == "signUp" ? (
             <div style={{ padding: "5px", marginBottom: "7px" }}>
-              <label>אמת סיסמא</label>
+              <label>Confirm Password</label>
               <input
                 type="password"
                 className="form-control"
-                placeholder="אמת סיסמא"
+                placeholder="Confirm Password"
                 value={verifyPassword}
                 onChange={(e) => setVerifyPassword(e.target.value)}
               />
@@ -141,14 +141,14 @@ export default function Welcome(props) {
           style={{ background: "#ff8100", borderColor: "#858585" }}
           onClick={mode === "logIn" ? onLogIn : onSignUp}
         >
-          {mode === "logIn" ? "התחברות" : "הרשמה"}
+          {mode === "logIn" ? "Log In" : "Sign Up"}
         </button>
         <button
           className="btn btn-primary btn-block"
           style={{ background: "#ff8100", borderColor: "#858585" }}
           onClick={onSwitchMode}
         >
-          {mode === "logIn" ? "עבור להרשמה" : "עבור להתחברות"}
+          {mode === "logIn" ? "Go to sign up" : "Go to Login"}
         </button>
       </div>
     </div>
